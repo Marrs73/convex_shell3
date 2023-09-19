@@ -38,6 +38,6 @@ try:
         tk.clean()
         f.draw(tk)
         print(f"S = {f.area()}, P = {f.perimeter()}\n")
-except(EOFError, KeyboardInterrupt):
+except (EOFError, KeyboardInterrupt):
     print("\nStop")
     tk.close()

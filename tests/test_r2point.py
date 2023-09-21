@@ -145,3 +145,11 @@ class TestR2Point:
     def test_null_area(self):
         a, b, c = R2Point(-4, 2), R2Point(-1, 5), R2Point(8, -2)
         assert R2Point.positive_area(a, b, c) == approx(10.79365)
+
+    def test_borders1(self):
+        a, b, c = R2Point(0, 0), R2Point(1, 0), R2Point(0, 1)
+        assert R2Point.positive_area(a, b, c) == approx(0.5)
+
+    def test_borders2(self):
+        a, b, c = R2Point(0, 0), R2Point(-2, -2), R2Point(-2, 0)
+        assert R2Point.positive_area(a, b, c) == approx(0)

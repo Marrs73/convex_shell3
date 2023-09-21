@@ -14,6 +14,9 @@ class Figure:
     def area(self):
         return 0.0
 
+    def pos_area(self):
+        return 0.0
+
 
 class Void(Figure):
     """ "Hульугольник" """
@@ -66,12 +69,16 @@ class Polygon(Figure):
             self.points.push_first(c)
         self._perimeter = a.dist(b) + b.dist(c) + c.dist(a)
         self._area = abs(R2Point.area(a, b, c))
+        self._pos_area = abs(R2Point.positive_area(a, b, c))
 
     def perimeter(self):
         return self._perimeter
 
     def area(self):
         return self._area
+
+    def pos_area(self):
+        return self._pos_area
 
     # добавление новой точки
     def add(self, t):
@@ -90,12 +97,17 @@ class Polygon(Figure):
             self._area += abs(R2Point.area(t,
                                            self.points.last(),
                                            self.points.first()))
+            self._pos_area += abs(R2Point.positive_area(t,
+                                  self.points.last(),
+                                  self.points.first()))
 
             # удаление освещённых рёбер из начала дека
             p = self.points.pop_first()
             while t.is_light(p, self.points.first()):
                 self._perimeter -= p.dist(self.points.first())
                 self._area += abs(R2Point.area(t, p, self.points.first()))
+                self._pos_area += abs(R2Point.positive_area(
+                    t, p, self.points.first()))
                 p = self.points.pop_first()
             self.points.push_first(p)
 
@@ -104,6 +116,8 @@ class Polygon(Figure):
             while t.is_light(self.points.last(), p):
                 self._perimeter -= p.dist(self.points.last())
                 self._area += abs(R2Point.area(t, p, self.points.last()))
+                self._pos_area += abs(R2Point.positive_area(
+                    t, p, self.points.last()))
                 p = self.points.pop_last()
             self.points.push_last(p)
 

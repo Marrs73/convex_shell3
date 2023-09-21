@@ -44,6 +44,7 @@ class R2Point:
             y3 = (last.x)/(last.x - first.x)*(first.y - last.y) + last.y
             if not R2Point(0, y3).is_inside(last, first):
                 y3 = -1
+
         if (new.y == first.y):
             x1 = -1
         else:
@@ -62,10 +63,22 @@ class R2Point:
             x3 = (last.y)/(last.y - first.y)*(first.x - last.x) + last.x
             if not R2Point(x3, 0).is_inside(last, first):
                 x3 = -1
+        if x1 == 0 and y1 == 0:
+            y1 = -2
+            if (first.x < 0 and first.y > 0 or new.x < 0 and new.y > 0):
+                x1 = -2
+        if x2 == 0 and y2 == 0:
+            y2 = -2
+            if (last.x < 0 and last.y > 0 or new.x < 0 and new.y > 0):
+                x2 = -2
+        if x3 == 0 and y3 == 0:
+            y3 = -2
+            if (first.x < 0 and first.y > 0 or last.x < 0 and last.y > 0):
+                x3 = -2
 
         # селекция точек треугольника, находящихся в первом квадранте
         pos_points = [R2Point(point.x, point.y) for point in [new, first, last]
-                      if point.x >= 0 and point.y >= 0]
+                      if point.x > 0 and point.y > 0]
         pos_points_length = len(pos_points)
 
         # селекция пересечений, лежащих на положительных частях осей.
@@ -185,6 +198,12 @@ class R2Point:
                  (a.x >= self.x and self.x >= b.x)) and
                 ((a.y <= self.y and self.y <= b.y) or
                  (a.y >= self.y and self.y >= b.y)))
+
+    def is_strict_inside(self, a, b):
+        return (((a.x < self.x and self.x < b.x) or
+                 (a.x > self.x and self.x > b.x)) and
+                ((a.y < self.y and self.y < b.y) or
+                 (a.y > self.y and self.y > b.y)))
 
     # Освещено ли из данной точки ребро (a,b)?
     def is_light(self, a, b):

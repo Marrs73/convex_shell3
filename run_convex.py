@@ -7,6 +7,7 @@ try:
     while True:
         f = f.add(R2Point())
         print(f"S = {f.area()}, S+ = {f.pos_area()}, P = {f.perimeter()}")
+
         print()
 except (EOFError, KeyboardInterrupt):
     print("\nStop")

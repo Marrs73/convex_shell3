@@ -30,38 +30,38 @@ class R2Point:
             y1 = -1
         else:
             y1 = (first.x)/(first.x - new.x)*(new.y - first.y) + first.y
-            if not R2Point(0, y1).is_inside(new, first):
+            if not R2Point(0, y1).is_strict_inside(new, first):
                 y1 = -1
         if (new.x == last.x):
             y2 = -1
         else:
             y2 = (last.x)/(last.x - new.x)*(new.y - last.y) + last.y
-            if not R2Point(0, y2).is_inside(new, last):
+            if not R2Point(0, y2).is_strict_inside(new, last):
                 y2 = -1
         if (first.x == last.x):
             y3 = -1
         else:
             y3 = (last.x)/(last.x - first.x)*(first.y - last.y) + last.y
-            if not R2Point(0, y3).is_inside(last, first):
+            if not R2Point(0, y3).is_strict_inside(last, first):
                 y3 = -1
 
         if (new.y == first.y):
             x1 = -1
         else:
             x1 = (first.y)/(first.y - new.y)*(new.x - first.x) + first.x
-            if not R2Point(x1, 0).is_inside(new, first):
+            if not R2Point(x1, 0).is_strict_inside(new, first):
                 x1 = -1
         if (new.y == last.y):
             x2 = -1
         else:
             x2 = (last.y)/(last.y - new.y)*(new.x - last.x) + last.x
-            if not R2Point(x2, 0).is_inside(new, last):
+            if not R2Point(x2, 0).is_strict_inside(new, last):
                 x2 = -1
         if (first.y == last.y):
             x3 = -1
         else:
             x3 = (last.y)/(last.y - first.y)*(first.x - last.x) + last.x
-            if not R2Point(x3, 0).is_inside(last, first):
+            if not R2Point(x3, 0).is_strict_inside(last, first):
                 x3 = -1
         if x1 == 0 and y1 == 0:
             y1 = -2
@@ -78,8 +78,12 @@ class R2Point:
 
         # селекция точек треугольника, находящихся в первом квадранте
         pos_points = [R2Point(point.x, point.y) for point in [new, first, last]
-                      if point.x > 0 and point.y > 0]
+                      if point.x >= 0 and point.y >= 0]
         pos_points_length = len(pos_points)
+
+        # print([(i.x, i.y) for i in [R2Point(x1, 0),
+        #       R2Point(0, y1), R2Point(x2, 0), R2Point(0, y2),
+        #       R2Point(x3, 0), R2Point(0, y3)]])
 
         # селекция пересечений, лежащих на положительных частях осей.
         pos_crosses = [R2Point(cross.x, cross.y) for cross in [R2Point(x1, 0),
@@ -87,21 +91,43 @@ class R2Point:
                        R2Point(x3, 0), R2Point(0, y3)]
                        if cross.x >= 0 and cross.y >= 0]
         pos_crosses_length = len(pos_crosses)
+        print("point = ", pos_points_length, ", cross = ",
+              pos_crosses_length)
+        print([(i.x, i.y) for i in pos_crosses])
 
         if pos_points_length == 3:
-            return R2Point.area(new, first, last)
+            return abs(R2Point.area(new, first, last))
 
-        if pos_points_length == 0 and pos_crosses_length == 0:
-            return 0
+        elif pos_crosses_length == 0:
+            if pos_points_length == 2 and \
+                not (pos_points[0].x == pos_points[1].x
+                     or pos_points[0].y == pos_points[1].y):
+                return abs(R2Point.area(zero_point,
+                                        pos_points[0], pos_points[1]))
+            else:
+                return 0
 
-        if pos_crosses_length == 2:
+        elif pos_crosses_length == 1:
+            if pos_crosses[0] == zero_point:
+                return 0
+
+            return abs(R2Point.area(pos_crosses[0], pos_points[0],
+                                    pos_points[1]))
+
+        elif pos_crosses_length == 2:
             if pos_points_length == 0:
-                return R2Point.area(pos_crosses[0], pos_crosses[1], zero_point)
+                return abs(R2Point.area(pos_crosses[0], pos_crosses[1],
+                                        zero_point))
 
             elif pos_points_length == 1:
-                return R2Point.area(pos_crosses[0], pos_crosses[1],
-                                    pos_points[0])\
-                    + R2Point.area(pos_crosses[0], pos_crosses[1], zero_point)
+                if pos_points[0] == zero_point:
+                    return abs(R2Point.area(pos_crosses[0],
+                                            pos_crosses[1], zero_point))
+                else:
+                    return abs(R2Point.area(pos_crosses[0], pos_crosses[1],
+                                            pos_points[0]))\
+                        + abs(R2Point.area(pos_crosses[0],
+                                           pos_crosses[1], zero_point))
 
             else:  # pos_points_length == 2
                 if pos_crosses[0].x == 0 and pos_crosses[1].x == 0:
@@ -114,8 +140,8 @@ class R2Point:
                     if point1.y < point2.y:
                         point1, point2 = point2, point1
 
-                    return R2Point.area(cross1, point1, point2) +\
-                        R2Point.area(cross1, cross2, point2)
+                    return abs(R2Point.area(cross1, point1, point2)) +\
+                        abs(R2Point.area(cross1, cross2, point2))
 
                 elif pos_crosses[0].y == 0 and pos_crosses[1].y == 0:
                     cross1 = R2Point(min(pos_crosses[0].x,
@@ -127,8 +153,8 @@ class R2Point:
                     if point1.x > point2.x:
                         point1, point2 = point2, point1
 
-                    return R2Point.area(cross1, point1, point2) +\
-                        R2Point.area(cross1, cross2, point2)
+                    return abs(R2Point.area(cross1, point1, point2)) +\
+                        abs(R2Point.area(cross1, cross2, point2))
 
                 else:
                     cross1 = R2Point(0, max(pos_crosses[0].y,
@@ -143,9 +169,48 @@ class R2Point:
                         point1 = pos_points[0]
                         point2 = pos_points[1]
 
-                    return R2Point.area(cross1, point1, point3)\
-                        + R2Point.area(cross1, cross2, point2)\
-                        + R2Point.area(cross1, cross2, zero_point)
+                    return abs(R2Point.area(cross1, point1, point3))\
+                        + abs(R2Point.area(cross1, cross2, point2))\
+                        + abs(R2Point.area(cross1, cross2, zero_point))
+
+        elif pos_crosses_length == 3:
+            y_crosses = [cross for cross in pos_crosses if cross.x == 0]
+            x_crosses = [cross for cross in pos_crosses if cross.y == 0]
+
+            if len(y_crosses == 2):
+                max_y = 0
+                for i in pos_crosses:
+                    if i.y > max_y:
+                        max_y = i.y
+                cross1 = R2Point(0, max_y)
+                pos_crosses.remove(R2Point(0, max_y))
+
+                second_max_y = 0
+                for i in pos_crosses:
+                    if i.y > second_max_y:
+                        second_max_y = i.y
+                cross2 = R2Point(0, second_max_y)
+                pos_crosses.remove(R2Point(0, second_max_y))
+
+            else:
+                max_x = 0
+                for i in pos_crosses:
+                    if i.x > max_x:
+                        max_x = i.x
+                cross1 = R2Point(max_x, 0)
+                pos_crosses.remove(R2Point(max_x, 0))
+
+                second_max_x = 0
+                for i in pos_crosses:
+                    if i.x > second_max_x:
+                        second_max_x = i.x
+                cross2 = R2Point(second_max_x, 0)
+                pos_crosses.remove(R2Point(second_max_x, 0))
+
+            cross3 = pos_crosses[0]
+
+            return abs(R2Point.area(cross1, cross2, pos_points[0]) +
+                       R2Point.area(cross1, cross3, pos_points[0]))
 
         elif pos_crosses_length == 4:
             max_y = 0
@@ -153,33 +218,36 @@ class R2Point:
                 if i.y > max_y:
                     max_y = i.y
             point1 = R2Point(0, max_y)
+            pos_crosses.remove(R2Point(0, max_y))
 
             second_max_y = 0
             for i in pos_crosses:
-                if i.y > second_max_y and i.y < max_y:
+                if i.y > second_max_y:
                     second_max_y = i.y
             point2 = R2Point(0, second_max_y)
+            pos_crosses.remove(R2Point(0, second_max_y))
 
             max_x = 0
             for i in pos_crosses:
                 if i.x > max_x:
                     max_x = i.x
             point4 = R2Point(max_x, 0)
+            pos_crosses.remove(R2Point(max_x, 0))
 
             second_max_x = 0
             for i in pos_crosses:
-                if i.x > second_max_x and i.x < max_x:
+                if i.x > second_max_x:
                     second_max_x = i.x
             point3 = R2Point(second_max_x, 0)
 
             if pos_points_length == 1:
-                return R2Point.area(point1, point2, pos_points[0])\
-                    + R2Point.area(point2, point3, pos_points[0])\
-                    + R2Point.area(point3, point4, pos_points[0])
+                return abs(R2Point.area(point1, point2, pos_points[0]))\
+                    + abs(R2Point.area(point2, point3, pos_points[0]))\
+                    + abs(R2Point.area(point3, point4, pos_points[0]))
 
             elif pos_points_length == 0:
-                return R2Point.area(point1, point2, point4)\
-                    + R2Point.area(point2, point3, point4)
+                return abs(R2Point.area(point1, point2, point4))\
+                    + abs(R2Point.area(point2, point3, point4))
 
         return "None of the cases came up"
 
@@ -200,10 +268,12 @@ class R2Point:
                  (a.y >= self.y and self.y >= b.y)))
 
     def is_strict_inside(self, a, b):
-        return (((a.x < self.x and self.x < b.x) or
-                 (a.x > self.x and self.x > b.x)) and
-                ((a.y < self.y and self.y < b.y) or
-                 (a.y > self.y and self.y > b.y)))
+        return ((((a.x <= self.x and self.x <= b.x) or
+                 (a.x >= self.x and self.x >= b.x)) and
+                ((a.y <= self.y and self.y <= b.y) or
+                 (a.y >= self.y and self.y >= b.y))) and
+                ((self.x != a.x or self.y != a.y) and
+                (self.x != b.x or self.y != b.y)))
 
     # Освещено ли из данной точки ребро (a,b)?
     def is_light(self, a, b):

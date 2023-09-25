@@ -91,9 +91,9 @@ class R2Point:
                        R2Point(x3, 0), R2Point(0, y3)]
                        if cross.x >= 0 and cross.y >= 0]
         pos_crosses_length = len(pos_crosses)
-        print("point = ", pos_points_length, ", cross = ",
-              pos_crosses_length)
-        print([(i.x, i.y) for i in pos_crosses])
+        # print("point = ", pos_points_length, ", cross = ",
+        #       pos_crosses_length)
+        # print([(i.x, i.y) for i in pos_crosses])
 
         if pos_points_length == 3:
             return abs(R2Point.area(new, first, last))
@@ -175,7 +175,6 @@ class R2Point:
 
         elif pos_crosses_length == 3:
             y_crosses = [cross for cross in pos_crosses if cross.x == 0]
-            x_crosses = [cross for cross in pos_crosses if cross.y == 0]
 
             if len(y_crosses == 2):
                 max_y = 0

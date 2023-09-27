@@ -84,16 +84,16 @@ class TestR2Point:
     ######################################
 
     # Треугольник вырождается в точку
-    def test_point_case(self):
+    def test_point_case0(self):
         a, b, c = R2Point(1, 1), R2Point(1, 1), R2Point(1, 1)
         assert R2Point.positive_area(a, b, c) == 0
 
-    def test_point_case(self):
+    def test_point_case1(self):
         a, b, c = R2Point(0, 0), R2Point(0, 0), R2Point(0, 0)
         assert R2Point.positive_area(a, b, c) == 0
 
     # Треугольник вырождается в прямую
-    def test_line_case(self):
+    def test_line_case2(self):
         a, b, c = R2Point(0, 0), R2Point(5, 5), R2Point(3, 3)
         assert R2Point.positive_area(a, b, c) == 0
 

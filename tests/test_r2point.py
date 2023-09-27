@@ -3,11 +3,17 @@ from math import sqrt
 from r2point import R2Point
 
 # python -B -m pytest -p no:cacheprovider
+# coverage run -m pytest -p no:cacheprovider
 
 
 class TestR2Point:
 
     # Расстояние от точки до самой себя равно нулю
+    def test_eq0(self):
+        a = R2Point(1.0, 1.0)
+        b = 3
+        assert (a == b) is False
+
     def test_dist1(self):
         a = R2Point(1.0, 1.0)
         assert a.dist(R2Point(1.0, 1.0)) == approx(0.0)
@@ -97,52 +103,68 @@ class TestR2Point:
         assert R2Point.positive_area(a, b, c) == approx(R2Point.area(a, b, c))
 
     # Треугольник полносью вне первого квадранта
-    def test_null_area(self):
+    def test_pos_area_1(self):
         a, b, c = R2Point(0, 0), R2Point(-4, -4), R2Point(-4, 0)
         assert R2Point.positive_area(a, b, c) == approx(0)
 
     # Треугольник имеет 2 пересечения и 0 точек в первом квадранте
-    def test_null_area(self):
+    def test_pos_area_2(self):
         a, b, c = R2Point(-2, 4), R2Point(4, -2), R2Point(-2, -2)
         assert R2Point.positive_area(a, b, c) == approx(2)
 
     # Треугольник имеет 2 пересечения и 1 точку в первом квадранте,
     # не включая начало координат
-    def test_null_area(self):
+    def test_pos_area_3(self):
         a, b, c = R2Point(-4, 6), R2Point(-2, 2), R2Point(4, 4)
-        assert R2Point.positive_area(a, b, c) == approx(4.7)
+        assert R2Point.positive_area(a, b, c) == approx(4.666, rel=1e-2)
 
     # Треугольник имеет 2 пересечения и 1 точку в первом квадранте,
     # включая начало координат
-    def test_null_area(self):
+    def test_pos_area_4(self):
         a, b, c = R2Point(-4, 2), R2Point(-2, -4), R2Point(4, 4)
         assert R2Point.positive_area(a, b, c) == approx(8)
 
     # Треугольник имеет 2 пересечения и 2 точки в первом квадранте
     # на оси Oy
-    def test_null_area(self):
+    def test_pos_area_5(self):
         a, b, c = R2Point(-4, 6), R2Point(4, 8), R2Point(4, 2)
-        assert R2Point.positive_area(a, b, c) == approx(18.1)
+        assert R2Point.positive_area(a, b, c) == approx(18.0)
+
+    def test_pos_area_5_2(self):
+        a, b, c = R2Point(-4, 6), R2Point(4, 2), R2Point(4, 8)
+        assert R2Point.positive_area(a, b, c) == approx(18.0)
 
     # Треугольник имеет 2 пересечения и 2 точки в первом квадранте
     # на оси Ox
-    def test_null_area(self):
+    def test_pos_area_6(self):
         a, b, c = R2Point(1, 1), R2Point(2, -3), R2Point(5, 3)
-        assert R2Point.positive_area(a, b, c) == approx(5.6)
+        assert R2Point.positive_area(a, b, c) == approx(5.625)
+
+    def test_pos_area_6_2(self):
+        a, b, c = R2Point(5, 3), R2Point(2, -3), R2Point(1, 1)
+        assert R2Point.positive_area(a, b, c) == approx(5.625)
 
     # Треугольник имеет 2 пересечения и 2 точки в первом квадранте
     # на разных осях
-    def test_null_area(self):
+    def test_pos_area_7(self):
         a, b, c = R2Point(-2, -2), R2Point(3, 5), R2Point(6, 3)
         assert R2Point.positive_area(a, b, c) == approx(13.5)
 
+    def test_pos_area_7_2(self):
+        a, b, c = R2Point(-2, -2), R2Point(6, 3), R2Point(3, 5)
+        assert R2Point.positive_area(a, b, c) == approx(13.5)
+
     # Треугольник имеет 4 пересечния и 1 точку в первом квадранте
-    def test_null_area(self):
+    def test_pos_area_8(self):
         a, b, c = R2Point(-4, -4), R2Point(6, 3), R2Point(6, -2)
-        assert R2Point.positive_area(a, b, c) == approx(17.7)
+        assert R2Point.positive_area(a, b, c) == approx(6.42, rel=1e-2)
+
+    def test_pos_area_8_2(self):
+        a, b, c = R2Point(-2, 4), R2Point(6, 3), R2Point(6, -2)
+        assert R2Point.positive_area(a, b, c) == approx(16.083, rel=1e-2)
 
     # Треугольник имеет 4 пересечения и 0 точек в первом квадранте
-    def test_null_area(self):
+    def test_pos_area_9(self):
         a, b, c = R2Point(-4, 2), R2Point(-1, 5), R2Point(8, -2)
         assert R2Point.positive_area(a, b, c) == approx(10.79365)
 
@@ -153,3 +175,43 @@ class TestR2Point:
     def test_borders2(self):
         a, b, c = R2Point(0, 0), R2Point(-2, -2), R2Point(-2, 0)
         assert R2Point.positive_area(a, b, c) == approx(0)
+
+    def test_pos_area_10(self):
+        a, b, c = R2Point(2, -2), R2Point(-2, 2), R2Point(-2, -2)
+        assert R2Point.positive_area(a, b, c) == approx(0)
+
+    def test_pos_area_11(self):
+        a, b, c = R2Point(-2, -2), R2Point(-2, 2), R2Point(2, -2)
+        assert R2Point.positive_area(a, b, c) == approx(0)
+
+    def test_pos_area_12(self):
+        a, b, c = R2Point(2, -2), R2Point(-2, -2), R2Point(-2, 2)
+        assert R2Point.positive_area(a, b, c) == approx(0)
+
+    def test_pos_area_13(self):
+        a, b, c = R2Point(2, 0), R2Point(0, 2), R2Point(-3, -3)
+        assert R2Point.positive_area(a, b, c) == approx(2.0)
+
+    def test_pos_area_14(self):
+        a, b, c = R2Point(3, 0), R2Point(3, 5), R2Point(7, -1)
+        assert R2Point.positive_area(a, b, c) == approx(7.9, rel=1e-1)
+
+    def test_pos_area_15(self):
+        a, b, c = R2Point(3, 0), R2Point(3, 5), R2Point(7, -1)
+        assert R2Point.positive_area(a, b, c) == approx(7.9, rel=1e-1)
+
+    def test_pos_area_16(self):
+        a, b, c = R2Point(-1, 3), R2Point(4, -1), R2Point(0, 0)
+        assert R2Point.positive_area(a, b, c) == approx(3.025, rel=1e-1)
+
+    def test_pos_area_17(self):
+        a, b, c = R2Point(-1, 6), R2Point(2, 0), R2Point(6, -1)
+        assert R2Point.positive_area(a, b, c) == approx(8.5, rel=1e-1)
+
+    def test_pos_area_18(self):
+        a, b, c = R2Point(0, 3), R2Point(-1, 7), R2Point(4, -1)
+        assert R2Point.positive_area(a, b, c) == approx(4.613, rel=1e-1)
+
+    def test_pos_area_19(self):
+        a, b, c = R2Point(-2, -2), R2Point(6, 2), R2Point(4, 4)
+        assert R2Point.positive_area(a, b, c) == approx(10, rel=1e-1)

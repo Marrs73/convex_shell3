@@ -30,6 +30,9 @@ class TestVoid:
     def test_add(self):
         assert isinstance(self.f.add(R2Point(0.0, 0.0)), Point)
 
+    def test_pos_area(self):
+        assert self.f.pos_area() == 0.0
+
 
 class TestPoint:
 
@@ -93,7 +96,7 @@ class TestSegment:
         assert isinstance(self.f.add(R2Point(2.0, 0.0)), Segment)
 
     # При добавлении точки двуугольник может превратиться в треугольник
-    def test_add2(self):
+    def test_add3(self):
         assert isinstance(self.f.add(R2Point(0.0, 1.0)), Polygon)
 
 
@@ -107,6 +110,8 @@ class TestPolygon:
                 1.0, 0.0), R2Point(
                 0.0, 1.0))
 
+    def test_pos_area(self):
+        assert self.f.pos_area() == 0.5
     # Многоугольник является фигурой
     def test_figure(self):
         assert isinstance(self.f, Figure)

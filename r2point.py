@@ -108,8 +108,8 @@ class R2Point:
                 return 0
 
         elif pos_crosses_length == 1:
-            if pos_crosses[0] == zero_point:
-                return 0
+            # if pos_crosses[0] == zero_point:
+            #     return 0
 
             return abs(R2Point.area(pos_crosses[0], pos_points[0],
                                     pos_points[1]))
@@ -165,18 +165,20 @@ class R2Point:
                     if (pos_points[0].y > pos_points[0].x):
                         point1 = pos_points[0]
                         point2 = pos_points[1]
-                    elif (pos_points[1].y < pos_points[1].x):
-                        point1 = pos_points[0]
-                        point2 = pos_points[1]
+                    elif (pos_points[1].y > pos_points[1].x):
+                        point1 = pos_points[1]
+                        point2 = pos_points[0]
 
-                    return abs(R2Point.area(cross1, point1, point3))\
+                    return abs(R2Point.area(cross1, point1, point2))\
                         + abs(R2Point.area(cross1, cross2, point2))\
                         + abs(R2Point.area(cross1, cross2, zero_point))
 
         elif pos_crosses_length == 3:
-            y_crosses = [cross for cross in pos_crosses if cross.x == 0]
-
-            if len(y_crosses == 2):
+            y_crosses = list([cross for cross in pos_crosses if cross.x == 0])
+            # print(pos_crosses[0].x, pos_crosses[0].y)
+            # print(pos_crosses[1].x, pos_crosses[1].y)
+            # print(pos_crosses[2].x, pos_crosses[2].y)
+            if len(y_crosses) == 2:
                 max_y = 0
                 for i in pos_crosses:
                     if i.y > max_y:
@@ -208,8 +210,8 @@ class R2Point:
 
             cross3 = pos_crosses[0]
 
-            return abs(R2Point.area(cross1, cross2, pos_points[0]) +
-                       R2Point.area(cross1, cross3, pos_points[0]))
+            return abs(R2Point.area(cross1, cross2, pos_points[0])) +\
+                abs(R2Point.area(cross1, cross3, pos_points[0]))
 
         elif pos_crosses_length == 4:
             max_y = 0
@@ -247,8 +249,6 @@ class R2Point:
             elif pos_points_length == 0:
                 return abs(R2Point.area(point1, point2, point4))\
                     + abs(R2Point.area(point2, point3, point4))
-
-        return "None of the cases came up"
 
     # Лежат ли точки на одной прямой?
     @staticmethod
